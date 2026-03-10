@@ -33,7 +33,7 @@ function setup() {
   rectMode(CENTER); // Center rectangles on their position
   textAlign(CENTER, CENTER);
 
- //Start position
+  //Start position
   playerX = width / 2;
   playerY = height - 60;
 }
@@ -41,20 +41,26 @@ function setup() {
 function draw() {
   background(30, 30, 40); 
 
-  if (gameState === "START") {drawMenu();}
+  if (gameState === "START") {
+    drawMenu();
+  }
   else if (gameState === "PLAY") {
     drawEnvironment();
     drawPlayer();
     drawCars();
     checkWin();
-// Display timer
+    // Display timer
     fill(255);
     textSize(20);
     let timer = (millis() - startTime) / 1000;
     text("Time: " + timer.toFixed(2) + "s", width - 100, 30);
   }
-  else if (gameState === "WIN") drawEndScreen("VICTORY!", color(100, 255, 100)); // Green color for win
-  else if (gameState === "GAMEOVER") drawEndScreen("GAME OVER", color(255, 80, 80)); // Red color for game over
+  else if (gameState === "WIN") {
+    drawEndScreen("VICTORY!", color(100, 255, 100));
+  } // Green color for win
+  else if (gameState === "GAMEOVER") {
+    drawEndScreen("GAME OVER", color(255, 80, 80));
+  } // Red color for game over
 }
 
 //menu screen
@@ -82,7 +88,8 @@ function drawColorBox(x, r, g, b) {
   if (playerRed === r && playerGreen === g && playerBlue === b) {
     stroke(255);
     strokeWeight(4);
-  } else {
+  }
+  else {
     stroke(120);
     strokeWeight(1);
   }
@@ -103,7 +110,8 @@ function drawEndScreen(title, col) {
   if (gameState === "WIN") {
     text("Your Time: " + (finishTime / 1000).toFixed(2) + "s", width / 2, height / 2 + 20);
     text("Press R to Restart", width / 2, height / 2 + 60);
-  } else {
+  }
+  else {
     text("Press R to Restart", width / 2, height / 2 + 40);
   }
 }
@@ -171,7 +179,9 @@ function drawCars() {
 function drawCar(x, y, speed) {
   push();
   translate(x, y);
-  if (speed < 0) scale(-1, 1);
+  if (speed < 0) {
+    scale(-1, 1);
+  }
   fill(200, 50, 50);
   stroke(0);
   rect(0, 0, carWidth, carHeight, 10);
@@ -231,10 +241,18 @@ function keyPressed() {
   }
   else if (gameState === "PLAY") {
     let step = 35;
-    if (keyCode === UP_ARROW) playerY -= step;
-    if (keyCode === DOWN_ARROW) playerY += step;
-    if (keyCode === LEFT_ARROW) playerX -= step;
-    if (keyCode === RIGHT_ARROW) playerX += step;
+    if (keyCode === UP_ARROW) {
+      playerY -= step;
+    }
+    if (keyCode === DOWN_ARROW) {
+      playerY += step;
+    }
+    if (keyCode === LEFT_ARROW) {
+      playerX -= step;
+    }
+    if (keyCode === RIGHT_ARROW) {
+      playerX += step;
+    }
 
     playerX = constrain(playerX, playerSize / 2, width - playerSize / 2);
     playerY = constrain(playerY, playerSize / 2, height - playerSize / 2);
