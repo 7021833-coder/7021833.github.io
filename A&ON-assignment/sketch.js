@@ -16,6 +16,11 @@ let player = {
     b: 100,
     moves: 0
 };
+//leaderboard variables
+let leaderboard = [];
+let enteringName = false;
+let currentName = "";
+
 
 //character color selection
 let colorBoxX = [250, 350, 450, 550];
@@ -101,20 +106,44 @@ function drawColorBox(x, r, g, b) {
 }
 
 //end screen
-function drawEndScreen(title, col) {
+    function drawEndScreen(title, col) {
     background(20, 25, 35);
-    fill(col); // Use the color passed in for win/lose
+
+    fill(col); // Use the color passed as an argument for the title
     textSize(50);
     text(title, width / 2, 120);
 
-    // Display time only on win screen
-    fill(200);
+    fill(255);
     textSize(20);
-    if (gameState === "WIN") {
-        text("Your Time: " + (finishTime / 1000).toFixed(2) + "s", width / 2, height / 2 + 20);
-        text("Press R to Restart", width / 2, height / 2 + 60);
-    } else {
-        text("Press R to Restart", width / 2, height / 2 + 40);
+    text("Moves: " + player.moves, width / 2, 180); // Display moves on end screen
+
+    if (enteringName) {
+        text("Enter Name: " + currentName, width / 2, 240);
+        text("Press ENTER to save", width / 2, 280);
+      } // Display time only on win screen
+      else {
+        drawLeaderboard();
+        text("Press R to Restart", width / 2, 650);
+      } 
+}
+// to draw the leaderboard with top 5 scores
+
+function drawLeaderboard() {
+    textSize(22);
+    fill(200);
+    text("Leaderboard (Top 5)", width / 2, 320);
+// Loop through leaderboard entries and display them
+    for (let i = 0; i < leaderboard.length; i++) {
+        let entry = leaderboard[i];
+        let timeSec = (entry.time / 1000).toFixed(2);
+// Display name, moves, and time for each entry
+        text(
+            (i + 1) + ". " + entry.name +
+            " | Moves: " + entry.moves +
+            " | Time: " + timeSec + "s",
+            width / 2,
+            360 + i * 30
+        );
     }
 }
 
@@ -122,26 +151,33 @@ function drawEndScreen(title, col) {
 function drawEnvironment() {
     noStroke();
 
-    //grass
+    // Top and bottom safe zones
     fill(40, 160, 60);
-    rect(width / 2, height - 50, width, 100);
-    rect(width / 2, 50, width, 100);
+    rect(width / 2, height - 90, width, 180); // bottom start zone
+    rect(width / 2, 60, width, 100); // top safe zone
 
-    //trees being drawn (loop)
+    // Trees
     for (let x = 50; x < width; x += 150) {
-        drawTree(x, height - 80);
-        drawTree(x, 80);
+        drawTree(x, height - 120);
+        drawTree(x, 40);
     }
 
-    //road markings (nested loops)
-    stroke(255, 150);
-    strokeWeight(3);
-    for (let lane = 0; lane < laneY.length; lane++) {
+    // Draw lanes
+    for (let lane = 0; lane < laneCenters.length; lane++) {
+        // Lane background
+        noStroke();
+        fill(60);
+        rect(width / 2, laneCenters[lane], width, laneHeight);
+
+        // Dashed center line
+        stroke(255, 180);
+        strokeWeight(3);
         for (let x = 0; x < width; x += 50) {
-            line(x, laneY[lane], x + 25, laneY[lane]);
+            line(x, laneCenters[lane], x + 25, laneCenters[lane]);
         }
     }
 }
+
 // to draw trees on the grass areas
 function drawTree(x, y) {
     push();
@@ -158,25 +194,31 @@ function drawTree(x, y) {
 //player being drawn
 function drawPlayer() {
     push();
-    translate(playerX, playerY);
+    translate(player.x, player.y);
+    fill(player.r, player.g, player.b);
     stroke(0);
     strokeWeight(2);
-    fill(playerRed, playerGreen, playerBlue);
-    rect(0, 0, playerSize, playerSize, 8);
+    rect(0, 0, player.size, player.size, 8);
     pop();
 }
 
-//cars being drawn and moving in lanes
+//cars being drawn and moving in lanes updated to use laneCenters and laneSpeeds arrays
 function drawCars() {
-    for (let lane = 0; lane < laneY.length; lane++) {
-        for (let carIndex = 0; carIndex < 3; carIndex++) {
-            // Car moves in loop using frameCount * speed
-            let x = (frameCount * laneSpeed[lane] + carIndex * carSpacing) % (width + carWidth) - carWidth / 2;
-            drawCar(x, laneY[lane], laneSpeed[lane]);
-            checkCollision(x, laneY[lane]);
+    for (let lane = 0; lane < laneCenters.length; lane++) {
+         for (let i = 0; i < 3; i++) {
+
+            let baseX = i * carSpacing + (frameCount * laneSpeeds[lane]);
+            let x = baseX % (width + carWidth);
+
+            if (x < -carWidth) x += width + carWidth;
+            if (x > width + carWidth) x -= width + carWidth;
+
+            drawCar(x, laneCenters[lane], laneSpeeds[lane]);
+            checkCollision(x, laneCenters[lane]);
+        }
         }
     }
-}
+
 // to draw each car with its position and speed
 function drawCar(x, y, speed) {
     push();
