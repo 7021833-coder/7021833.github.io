@@ -7,3 +7,4 @@
 - [Perlin-Noise](06-noise)
 ## Assignments
 - [Interctive-Scene](interactive-scene)
+- [Array-And-Object-Notation](A&ON-assignment)
