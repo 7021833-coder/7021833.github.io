@@ -41,6 +41,31 @@ function keyPressed() {
   else if (key === "e") {
     grid = generateEmptyGrid(cols, rows);
   }
+  else if (key===" "){
+    grid=takeTurn();
+  }
+}
+
+function takeTurn(){
+let nextTurn = generateEmptyGrid(cols, rows );
+//look at every cell
+
+for (let x=0;x<cols;x++){
+    for (let y=0;y<rows;y++){
+
+      let neighbours=0;
+      for(let i=-1;i<=1;i++){
+        for(let i=-1;i<=1;i++){
+          //don't fall off the edge of the grid
+          if (x+i>=0 && x+i<cols){
+            
+          }
+        }
+      }
+    
+    }
+  }
+
 }
 
 function toggleCell(x, y) {
