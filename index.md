@@ -5,6 +5,8 @@
 - [Scope](2-scope)
 - [Images](3-images-inna-project)
 - [Perlin-Noise](06-noise)
+- [Game-Of-Life](9-life)
 ## Assignments
 - [Interctive-Scene](interactive-scene)
 - [Array-And-Object-Notation](A&ON-assignment)
+- [Grid-Based-Game](grid-based)

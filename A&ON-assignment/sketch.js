@@ -68,7 +68,9 @@ function setup() {
 function draw() {
   background(30, 30, 40);
 
-  if (gameState === "START") drawMenu();
+  if (gameState === "START") {
+    drawMenu();
+  }
   else if (gameState === "PLAY") {
     drawEnvironment();
     drawPlayer();
@@ -80,8 +82,13 @@ function draw() {
     let timer = (millis() - startTime) / 1000;
     // Display timer in the top right corner during gameplay
     text("Time: " + timer.toFixed(2) + "s", width - 100, 30);
-  } else if (gameState === "WIN") drawEndScreen("VICTORY!", color(100, 255, 100));
-  else if (gameState === "GAMEOVER") drawEndScreen("GAME OVER", color(255, 80, 80));
+  }
+  else if (gameState === "WIN") {
+    drawEndScreen("VICTORY!", color(100, 255, 100));
+  }
+  else if (gameState === "GAMEOVER") {
+    drawEndScreen("GAME OVER", color(255, 80, 80));
+  }
 }
 
 //menu screen
@@ -107,7 +114,8 @@ function drawColorBox(x, r, g, b) {
   if (player.r === r && player.g === g && player.b === b) {
     stroke(255);
     strokeWeight(4);
-  } else {
+  }
+  else {
     stroke(120);
     strokeWeight(1);
   }
@@ -130,7 +138,8 @@ function drawEndScreen(title, col) {
   if (enteringName) {
     text("Enter Name: " + currentName, width / 2, 240);
     text("Press ENTER to save", width / 2, 280);
-  } else {
+  }
+  else {
     drawLeaderboard();
     text("Press R to Restart", width / 2, 650);
   }
@@ -147,7 +156,7 @@ function drawLeaderboard() {
     let timeSec = (entry.time / 1000).toFixed(2);
 
     text(
-      (i + 1) + ". " + entry.name +
+      i + 1 + ". " + entry.name +
       " | Moves: " + entry.moves +
       " | Time: " + timeSec + "s",
       width / 2,
@@ -216,11 +225,15 @@ function drawCars() {
   for (let lane = 0; lane < laneCenters.length; lane++) {
     for (let i = 0; i < 3; i++) {
 
-      let baseX = i * carSpacing + (frameCount * laneSpeeds[lane]);
+      let baseX = i * carSpacing + frameCount * laneSpeeds[lane];
       let x = baseX % (width + carWidth);
 
-      if (x < -carWidth) x += width + carWidth;
-      if (x > width + carWidth) x -= width + carWidth;
+      if (x < -carWidth) {
+        x += width + carWidth;
+      }
+      if (x > width + carWidth) {
+        x -= width + carWidth;
+      }
 
       drawCar(x, laneCenters[lane], laneSpeeds[lane]);
       checkCollision(x, laneCenters[lane]);
@@ -233,7 +246,9 @@ function drawCar(x, y, speed) {
   push();
   translate(x, y);
 
-  if (speed < 0) scale(-1, 1);
+  if (speed < 0) {
+    scale(-1, 1);
+  }
 
   rectMode(CENTER);
 
@@ -287,7 +302,9 @@ function checkColorBoxClick(x, r, g, b) {
 function mousePressed() {
   if (gameState === "START") {
     for (let i = 0; i < colorBoxX.length; i++) {
-      if (checkColorBoxClick(colorBoxX[i], colorBoxColors[i].r, colorBoxColors[i].g, colorBoxColors[i].b)) break;
+      if (checkColorBoxClick(colorBoxX[i], colorBoxColors[i].r, colorBoxColors[i].g, colorBoxColors[i].b)) {
+        break;
+      }
     }
   }
 }
@@ -298,7 +315,9 @@ function keyPressed() {
   // NAME INPUT
   if (enteringName) {
     if (keyCode === ENTER) {
-      if (currentName.trim().length === 0) return;
+      if (currentName.trim().length === 0) {
+        return;
+      }
 
       leaderboard.push({
         name: currentName,
@@ -308,14 +327,18 @@ function keyPressed() {
 
       leaderboard.sort((a, b) => a.moves - b.moves); //sorts leaderboard by moves (lowest to highest)
 
-      if (leaderboard.length > 5) leaderboard.pop(); // keep only top 5
+      if (leaderboard.length > 5) {
+        leaderboard.pop();
+      } // keep only top 5
 
       currentName = "";
       enteringName = false;
 
-    } else if (keyCode === BACKSPACE) {
+    }
+    else if (keyCode === BACKSPACE) {
       currentName = currentName.substring(0, currentName.length - 1);  // remove last character for editing
-    } else if (key.length === 1 && currentName.length < 10) {
+    }
+    else if (key.length === 1 && currentName.length < 10) {
       currentName += key;
     }
     return;
@@ -331,10 +354,18 @@ function keyPressed() {
   else if (gameState === "PLAY") {
     let step = 80;
 
-    if (keyCode === UP_ARROW) { player.y -= step; player.moves++; }
-    if (keyCode === DOWN_ARROW) { player.y += step; player.moves++; }
-    if (keyCode === LEFT_ARROW) { player.x -= step; player.moves++; }
-    if (keyCode === RIGHT_ARROW) { player.x += step; player.moves++; }
+    if (keyCode === UP_ARROW) {
+      player.y -= step; player.moves++; 
+    }
+    if (keyCode === DOWN_ARROW) {
+      player.y += step; player.moves++; 
+    }
+    if (keyCode === LEFT_ARROW) {
+      player.x -= step; player.moves++; 
+    }
+    if (keyCode === RIGHT_ARROW) {
+      player.x += step; player.moves++; 
+    }
 
     player.x = constrain(player.x, player.size / 2, width - player.size / 2);
     player.y = constrain(player.y, player.size / 2, height - player.size / 2);
