@@ -1,13 +1,8 @@
-// Project Title
-// Your Name
-// Date
-//
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
-
 // 2d rectangular grid demo
 
 const CELL_SIZE = 20;
+const RENDER_ON_FRAME_MULTIPLE = 3;
+let autoPlayIsOn = false;
 let rows;
 let cols;
 let grid;
@@ -21,6 +16,9 @@ function setup() {
 
 function draw() {
   background(220);
+  if (autoPlayIsOn && frameCount % RENDER_ON_FRAME_MULTIPLE === 0) {
+    grid = takeTurn();
+  }
   displayGrid();
 }
 
@@ -30,8 +28,6 @@ function mousePressed() {
 
   //self
   toggleCell(x, y);
-
- 
 }
 
 function keyPressed() {
@@ -41,31 +37,57 @@ function keyPressed() {
   else if (key === "e") {
     grid = generateEmptyGrid(cols, rows);
   }
-  else if (key===" "){
-    grid=takeTurn();
+  else if (key === " ") {
+    grid = takeTurn();
+  }
+  else if (key === "a") {
+    autoPlayIsOn = !autoPlayIsOn;
   }
 }
 
-function takeTurn(){
-let nextTurn = generateEmptyGrid(cols, rows );
-//look at every cell
+function takeTurn() {
+  let nextTurn = generateEmptyGrid(cols, rows);
 
-for (let x=0;x<cols;x++){
-    for (let y=0;y<rows;y++){
+  //look at every cell
+  for (let x = 0; x < cols; x++) {
+    for (let y = 0; y < rows; y++) {
+      let neighbours = 0;
 
-      let neighbours=0;
-      for(let i=-1;i<=1;i++){
-        for(let i=-1;i<=1;i++){
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
           //don't fall off the edge of the grid
-          if (x+i>=0 && x+i<cols){
-            
+          if (x+i >= 0 && x+i < cols && y+j >= 0 && y+j < rows) {
+            neighbours += grid[y+j][x+i];
           }
         }
       }
-    
+
+      //don't count self as neighbour
+      neighbours -= grid[y][x];
+
+      //apply the rules
+      if (grid[y][x] === 1) {
+        //currently alive
+        if (neighbours === 2 || neighbours === 3) {
+          nextTurn[y][x] = 1;
+        }
+        else {
+          nextTurn[y][x] = 0;
+        }
+      }
+
+      if (grid[y][x] === 0) {
+        //currently dead
+        if (neighbours === 3) {
+          nextTurn[y][x] = 1;
+        }
+        else {
+          nextTurn[y][x] = 0;
+        }
+      }
     }
   }
-
+  return nextTurn;
 }
 
 function toggleCell(x, y) {
@@ -120,4 +142,3 @@ function generateEmptyGrid(cols, rows) {
   }
   return newGrid;
 }
-
