@@ -11,8 +11,7 @@ let grid;
 let gosper;
 
 function preload(){
-gosper = loadJSON("gosperCorrected.json");
-
+  gosper = loadJSON("gosperCorrected.json");
 }
 
 function setup() {
