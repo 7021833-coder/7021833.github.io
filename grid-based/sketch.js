@@ -9,6 +9,14 @@ const CELL_SIZE_HOMESTAND =50;
 const CELL_SIZE_HOME = 200;
 const PIECE_RADIUS = 15;
 const DICE_SIZE = 70;
+const ONEDOT_RADIUS = 20;
+const TWODOT_RADIUS = 10;
+const THREEDOT_RADIUS = 8;
+const FOURDOT_RADIUS = 8;
+const FIVEDOT_RADIUS = 7;
+const SIXDOT_RADIUS = 6;
+
+
 let diceNumber;
 let moveableGrid;
 function setup() {
@@ -16,19 +24,31 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+  drawDice();
 }
 
 
 function dice(){
-  diceNumber= random (1,6);
+  diceNumber= Math.floor(random (1,7));
+}
+
+function drawDice(){
+  stroke(0);
+  strokeWeight(2);
+  fill ("white");
+  square (829,937,DICE_SIZE);
+  if (diceNumber===1){
+    fill("red");
+    circle ();
+  }
 
 
 }
 
-function drawDice(diceNumber,DICE_SIZE){
-
-
+function mousePressed(){
 
 
 }
+
+
+
