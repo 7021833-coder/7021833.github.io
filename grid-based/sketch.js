@@ -36,7 +36,7 @@ function draw() {
 
 function calculateSizes() {
   let availableHeight = height * 0.8;
-// min ensures the board stays a square even on wide monitors
+  // min ensures the board stays a square even on wide monitors
   cellSize = min(width, availableHeight) / 10;
 }
 
