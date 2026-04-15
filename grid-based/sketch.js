@@ -31,7 +31,7 @@ let board = [];
 
 // These arrays define the start and end points of the special tiles (snakes and ladders)
 let specialTileStarts = [2, 7, 15, 28, 51, 16, 46, 62, 74, 99];
-let specialTileEnds   = [38, 14, 26, 84, 67, 6, 25, 19, 53, 80];
+let specialTileEnds   = [38, 14, 26, 84, 67, 6, 25, 19, 53, 40];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -41,10 +41,17 @@ function setup() {
 
 
 function draw() {
+
+  background(225);
+
   drawBoard();
   drawSpecials();
   drawPlayer();
   drawDice();
+
+  if (playerPos === 100) {
+    winText();
+  }
 }
 
 function calculateSizes() {
@@ -73,6 +80,7 @@ function initializeBoard() {
     let pos = getGridCoords(sNum);
     
     // Place the special tile on the board by setting the value at the corresponding row and column to the ending tile number
+    //also acts as a lookup for the player's position to know where to move them when they land on a snake or ladder
     board[pos.row][pos.col] = eNum;
   }
 }
@@ -85,18 +93,16 @@ function dice() {
 
   if (playerPos >= 100) {
     playerPos = 100;
-    let x = (width - DICE_SIZE) / 2;
-    let y = height - DICE_SIZE;
-
-    textSize(32);
-    fill("green");
-    textAlign(CENTER, CENTER);
-    text("You Win!", width/ 2, height - DICE_SIZE- 90);
-
-    textSize(32);
-    fill("black");
-    textAlign(CENTER, CENTER);
-    text("Click \"R\" to Restart", width/ 2, height - DICE_SIZE- 50);
+  }
+  //this piece gets info from initializeBoard() to check if the player has landed on a special tile and move them accordingly, if not it just leaves them where they are
+  else {
+    // Get the grid coordinates of the player's new position after moving
+    let pos = getGridCoords(playerPos); 
+    // Check if the player has landed on a special tile by looking up the value in the board array at the corresponding row and column
+    if (board[pos.row][pos.col] !== 0) {
+      // If the value is not 0, it means it's a special tile, so we update the player's position to the destination number of that tile
+      playerPos = board[pos.row][pos.col];
+    }
   }
 }
 
@@ -220,11 +226,13 @@ function getGridCoords(num) {
   }
 
   // Ensure player doesn't go beyond 100
-  if (num > 100) 
-  {num = 100;}
+  if (num > 100) {
+    num = 100;
+  }
 
   // We can't return two values at once so we return an object with both row and col as properties for easier access when drawing the player
   // This way we can easily get both the row and column coordinates in one function call and use them to draw the player on the canvas
+  // set rows as invertedRow to match the board's top-to-bottom numbering and col as is since it will be adjusted for odd rows in the function
   return { row: invertedRow, col: col }; 
 }
 
@@ -272,6 +280,18 @@ function restartGame() {
   // Reset the dice number to 0 or any default value if needed
   diceNumber = 0;
 }
+
+ function winText() {
+    textSize(32);
+    fill("green");
+    textAlign(CENTER, CENTER);
+    text("You Win!", width/ 2, height - DICE_SIZE- 90);
+
+    textSize(32);
+    fill("black");
+    textAlign(CENTER, CENTER);
+    text("Click \"R\" to Restart", width/ 2, height - DICE_SIZE- 50);
+  }
 
 function mouseClicked() {
   let x = (width - DICE_SIZE) / 2;
