@@ -162,7 +162,7 @@ function drawDice() {
   }
 
 }
-
+ // This function draws the 10x10 grid of the board and also adds the tile numbers to each cell for better visualization of cells
 function drawBoard() {
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
@@ -192,6 +192,7 @@ function drawBoard() {
   }
 }
 
+// This function calculates the tile number based on the row and column indices, taking into account the zigzag pattern of the board
 function getTileNumber(row, col) {
   let r = 9 - row;
   if (r % 2 === 0) {
@@ -204,6 +205,7 @@ function getTileNumber(row, col) {
   }
 }
 
+// This function draws the player's piece on the board based on their current position
 function drawPlayer() {
   let plyr= getGridCoords(playerPos);
   stroke(255); 
@@ -217,7 +219,7 @@ function getGridCoords(num) {
   let row = Math.floor((num - 1) / 10);
   let col = (num - 1) % 10;
 
-  // Invert the row index to match the board's top-to-bottom numbering
+  // invberting due to the board's top-to-bottom numbering, so row 0 is at the bottom and row 9 is at the top
   let invertedRow = 9 - row;
 
   // For odd rows, reverse the column index to account for the zigzag pattern
@@ -236,6 +238,7 @@ function getGridCoords(num) {
   return { row: invertedRow, col: col }; 
 }
 
+// this function draws the lines for snake and ladders based on the specialTileStarts and specialTileEnds arrays
 function drawSpecials() {
   for (let i = 0; i < specialTileStarts.length; i++) {
     let sNum = specialTileStarts[i];
