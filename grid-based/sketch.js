@@ -85,12 +85,18 @@ function dice() {
 
   if (playerPos >= 100) {
     playerPos = 100;
-      let x = (width - DICE_SIZE) / 2;
-      let y = height - DICE_SIZE;
+    let x = (width - DICE_SIZE) / 2;
+    let y = height - DICE_SIZE;
+
     textSize(32);
     fill("green");
     textAlign(CENTER, CENTER);
-    text("You Win!", width/ 2, height - DICE_SIZE- 50);
+    text("You Win!", width/ 2, height - DICE_SIZE- 90);
+
+    textSize(32);
+    fill("black");
+    textAlign(CENTER, CENTER);
+    text("Click \"R\" to Restart", width/ 2, height - DICE_SIZE- 50);
   }
 }
 
@@ -259,6 +265,14 @@ function drawSpecials() {
   }
 }
 
+function restartGame() {
+  // Reset the player's position to the starting point
+  playerPos = 1;
+
+  // Reset the dice number to 0 or any default value if needed
+  diceNumber = 0;
+}
+
 function mouseClicked() {
   let x = (width - DICE_SIZE) / 2;
   let y = height - DICE_SIZE - 20;
@@ -267,3 +281,8 @@ function mouseClicked() {
   }
 }
 
+function keyPressed() {
+  if (key === "r" || key === "R") {
+    restartGame();
+  }
+}
