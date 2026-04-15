@@ -26,12 +26,14 @@ let board = [];
 let snakesAndLadders
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  calculateSizes();
+  initializeBoard();
 }
 
 
 function draw() {
-  drawDice();
   drawBoard();
+  drawDice();
 }
 
 function calculateSizes() {
@@ -140,6 +142,15 @@ function drawBoard() {
       textAlign(LEFT, TOP);
       text(num, x + 5, y + 5);
     }
+  }
+}
+
+function getTileNumber(row, col) {
+  let r = 9 - row;
+  if (r % 2 === 0) {
+    return r * 10 + col + 1;
+  } else {
+    return r * 10 + (9 - col) + 1;
   }
 }
 
