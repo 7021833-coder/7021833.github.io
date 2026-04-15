@@ -1,10 +1,12 @@
 // 2D Array Game (Snakes and Ladders)
 // Zain Ahmad Zaram
-// Date
+// 14 April 2026
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
-
+// Took help a YTber named The Coding Train mostly for maths
+// learnt how to use counter the challenges of the left to right and right to left moving of the player on the board 
+// and how to convert the player's position on the board to row and column coordinates for drawing the player on the canvas
+// discovered the min() function to make sure the board stays a square even on wide monitors
 
 //for dice
 const DICE_SIZE = 70;
@@ -33,6 +35,7 @@ function setup() {
 
 function draw() {
   drawBoard();
+  drawPlayer();
   drawDice();
 }
 
@@ -43,12 +46,13 @@ function calculateSizes() {
 }
 
 
-// Create the 10x10 structure of the board using a 2D array
+// Create the 10x10 structure of the board using a 2D array (the main requirement of the project))
 function initializeBoard() {
   for (let i = 0; i < 10; i++) {
     board[i] = [];
     for (let j = 0; j < 10; j++) {
-      board[i][j] = 0; // Fill with 0 (normal tile)
+      // Initialize all cells to 0 (empty)
+      board[i][j] = 0; 
     }
   }
 }
@@ -57,6 +61,16 @@ function initializeBoard() {
 function dice() {
   diceNumber = Math.floor(random(1, 7));
   playerPos += diceNumber;
+
+  if (playerPos >= 100) {
+    playerPos = 100;
+      let x = (width - DICE_SIZE) / 2;
+      let y = height - DICE_SIZE;
+    textSize(32);
+    fill("green");
+    textAlign(CENTER, CENTER);
+    text("You Win!", width / 2, height / 2);
+  }
 }
 
 function drawDice() {
@@ -148,10 +162,42 @@ function drawBoard() {
 function getTileNumber(row, col) {
   let r = 9 - row;
   if (r % 2 === 0) {
+    // Even rows go left to right
     return r * 10 + col + 1;
-  } else {
+  } 
+  else {
+    // Odd rows go right to left
     return r * 10 + (9 - col) + 1;
   }
+}
+
+function drawPlayer() {
+  let plyr= getGridCoords(playerPos);
+  stroke(255); 
+  strokeWeight(2);
+  fill("blue"); 
+  circle(plyr.col * cellSize + cellSize / 2, plyr.row * cellSize + cellSize / 2, cellSize * 0.6);
+}
+
+function getGridCoords(num) {
+  // Calculate row and column based on the player's position on the board
+  let row = Math.floor((num - 1) / 10);
+  let col = (num - 1) % 10;
+
+  // Invert the row index to match the board's top-to-bottom numbering
+  let invertedRow = 9 - row;
+
+  // For odd rows, reverse the column index to account for the zigzag pattern
+  if (row % 2 === 1) {
+    col = 9 - col;
+  }
+
+  // Ensure player doesn't go beyond 100
+  if (num > 100) 
+  {num = 100;}
+
+  // Return as an object for easier access becouse we need both row and col to draw the player and it cant return two values at once
+  return { row: invertedRow, col: col }; 
 }
 
 function mouseClicked() {
