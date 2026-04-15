@@ -7,8 +7,10 @@
 // learnt how to use counter the challenges of the left to right and right to left moving of the player on the board 
 // and how to convert the player's position on the board to row and column coordinates for drawing the player on the canvas
 // discovered the min() function to make sure the board stays a square even on wide monitors
+// discovered transparancy in colors to make the lines for snakes and ladders look better and not so harsh on the eyes
+// discovered objects can be used to return multiple values from a function
 
-//for dice
+//Constants for dice
 const DICE_SIZE = 70;
 const ONEDOT_RADIUS = 20;
 const TWODOT_RADIUS = 10;
@@ -21,11 +23,16 @@ const SIXDOT_RADIUS = 9;
 const LIGHT_SKIN = "#f9d5b0";
 const DARK_SKIN = "#ac734a";
 
+//game variables
 let diceNumber;
 let playerPos = 1;
 let cellSize;
 let board = [];
-let snakesAndLadders
+
+// These arrays define the start and end points of the special tiles (snakes and ladders)
+let specialTileStarts = [2, 7, 15, 28, 51, 16, 46, 62, 74, 99];
+let specialTileEnds   = [38, 14, 26, 84, 67, 6, 25, 19, 53, 80];
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   calculateSizes();
@@ -35,6 +42,7 @@ function setup() {
 
 function draw() {
   drawBoard();
+  drawSpecials();
   drawPlayer();
   drawDice();
 }
@@ -46,16 +54,29 @@ function calculateSizes() {
 }
 
 
-// Create the 10x10 structure of the board using a 2D array (the main requirement of the project))
+// Create the 10x10 structure of the board using a 2D array (the main requirement of the project)
 function initializeBoard() {
   for (let i = 0; i < 10; i++) {
     board[i] = [];
     for (let j = 0; j < 10; j++) {
       // Initialize all cells to 0 (empty)
-      board[i][j] = 0; 
+      board[i][j] = 0;
     }
   }
+    // Populates the 2D array with destination numbers at specific coordinates to act as a "lookup table" for snakes and ladders
+  for (let i = 0; i < specialTileStarts.length; i++) {
+    // Get the starting and ending tile numbers for the current special tile while matching the indexes of the two arrays
+    let sNum = specialTileStarts[i];
+    let eNum = specialTileEnds[i];
+    
+    // Convert the starting tile number to grid coordinates (row and column)
+    let pos = getGridCoords(sNum);
+    
+    // Place the special tile on the board by setting the value at the corresponding row and column to the ending tile number
+    board[pos.row][pos.col] = eNum;
+  }
 }
+
 
 
 function dice() {
@@ -69,7 +90,7 @@ function dice() {
     textSize(32);
     fill("green");
     textAlign(CENTER, CENTER);
-    text("You Win!", width / 2, height / 2);
+    text("You Win!", width/ 2, height - DICE_SIZE- 50);
   }
 }
 
@@ -85,7 +106,7 @@ function drawDice() {
   stroke(0);
   strokeWeight(2);
   fill("white");
-  square(x, y, DICE_SIZE);
+  square(x, y, DICE_SIZE, 10);
   pop();
 
   if (diceNumber === 1) {
@@ -196,8 +217,46 @@ function getGridCoords(num) {
   if (num > 100) 
   {num = 100;}
 
-  // Return as an object for easier access becouse we need both row and col to draw the player and it cant return two values at once
+  // We can't return two values at once so we return an object with both row and col as properties for easier access when drawing the player
+  // This way we can easily get both the row and column coordinates in one function call and use them to draw the player on the canvas
   return { row: invertedRow, col: col }; 
+}
+
+function drawSpecials() {
+  for (let i = 0; i < specialTileStarts.length; i++) {
+    let sNum = specialTileStarts[i];
+    let eNum = specialTileEnds[i];
+
+    // Get the starting and ending tile coordinates for the current special tile while matching the indexes of the two arrays
+    let start = getGridCoords(sNum);
+    let end = getGridCoords(eNum);
+    
+    // Calculate the center coordinates of the starting and ending tiles for drawing the line
+    let x1 = start.col * cellSize + cellSize / 2;
+    let y1 = start.row * cellSize + cellSize / 2;
+    let x2 = end.col * cellSize + cellSize / 2;
+    let y2 = end.row * cellSize + cellSize / 2;
+
+    // Set the color
+    if (eNum > sNum) {
+      // Darker green with a bit of transparency
+      stroke(0, 180, 0, 180);
+    } else {
+      // Red with a bit of transparency
+      stroke(200, 0, 0, 180);
+    }
+
+    // Using cellSize * 0.2 makes the line about 20% of the square's width
+    strokeWeight(cellSize * 0.2); 
+    
+    line(x1, y1, x2, y2);
+    
+    // Added a small circle at the start so it looks like their heads are on the line,looks better overal
+    noStroke();
+    //used a ternary operator to make the code compact
+    fill(eNum > sNum ? "green" : "red");
+    circle(x1, y1, cellSize * 0.2);
+  }
 }
 
 function mouseClicked() {
@@ -207,6 +266,4 @@ function mouseClicked() {
     dice();
   }
 }
-
-
 
